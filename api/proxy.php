@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
    exit();
 }
 
-$ipInfo = json_decode(file_get_contents('https://ipinfo.io/json?nocache=' . time()));
+$ipInfo = json_decode(file_get_contents('https://ipinfo.io/json?token=66f1654f0055ae&nocache=' . time()));
 $ipAddress = $ipInfo->ip;
 
 $proxyCheckResponse = file_get_contents("https://proxycheck.io/v2/$ipAddress?key=public-35w8n2-878lub-12468p&asn=1&timestamp=" . time());

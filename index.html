@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+      <title>Kamu pake VPN?</title>
+   </head>
+
+   <body class="bg-gray-900 text-white">
+      <div id="app" class="min-h-screen flex items-center justify-center">
+         <div class="container mx-auto text-center">
+            <h1 class="text-3xl font-bold mb-4">Kamu pake VPN?</h1>
+            <div class="mt-8">
+               <p v-if="isUsingVPN" class="text-2xl font-bold">Pengguna menggunakan VPN.</p>
+               <p v-else class="text-2xl font-bold">Pengguna tidak menggunakan VPN.</p>
+            </div>
+         </div>
+      </div>
+
+      <script>
+         new Vue({
+            el: '#app',
+            data: {
+               isUsingVPN: false,
+            },
+            async mounted() {
+               try {
+                  this.isUsingVPN = await this.checkVPNUsage();
+               } catch (error) {
+                  console.error('Error:', error);
+               }
+            },
+            methods: {
+               async checkVPNUsage() {
+                  try {
+                     const response = await fetch('http://bpvp/check-ip/proxy.php');
+                     const ipInfo = await response.json();
+                     const ipAddress = ipInfo.ip;
+
+                     const proxyCheckResponse = await fetch(`https://proxycheck.io/v2/${ipAddress}?vpn=1&asn=1`);
+                     const proxyCheckData = await proxyCheckResponse.json();
+
+                     console.log(proxyCheckData[ipAddress].proxy);
+
+                     return 'yes' in proxyCheckData[ipAddress].proxy;
+                  } catch (error) {
+                     console.error('Waduh gagal bang =>', error);
+                     throw error;
+                  }
+               }
+            }
+         });
+      </script>
+   </body>
+
+</html>

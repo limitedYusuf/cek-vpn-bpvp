@@ -13,7 +13,7 @@ $ipAddress = $ipInfo->ip;
 $proxyCheckResponse = file_get_contents("https://proxycheck.io/v2/$ipAddress?key=public-35w8n2-878lub-12468p&vpn=1&asn=1");
 $proxyCheckData = json_decode($proxyCheckResponse, true);
 
-if (isset($proxyCheckData[$ipAddress]['proxy']) && $proxyCheckData[$ipAddress]['proxy'] === 'yes') {
+if (isset($proxyCheckData[$ipAddress]['proxy']) === 'yes') {
    echo json_encode(['isUsingVPN' => true, 'info' => $proxyCheckData[$ipAddress]]);
 } else {
    echo json_encode(['isUsingVPN' => false, 'info' => $proxyCheckData[$ipAddress]]);

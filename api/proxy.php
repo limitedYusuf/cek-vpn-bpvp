@@ -10,11 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $ipInfo = json_decode(file_get_contents('https://ipinfo.io/json'));
 $ipAddress = $ipInfo->ip;
 
-$proxyCheckResponse = file_get_contents("https://proxycheck.io/v2/$ipAddress?key=public-35w8n2-878lub-12468p&asn=1");
+$proxyCheckResponse = file_get_contents("https://proxycheck.io/v2/$ipAddress?key=public-35w8n2-878lub-12468p&asn=1&timestamp=" . time());
 $proxyCheckData = json_decode($proxyCheckResponse, true);
 
 if (isset($proxyCheckData[$ipAddress]['proxy']) && $proxyCheckData[$ipAddress]['proxy'] == 'yes') {
-   echo json_encode(['isUsingVPN' => true, 'geo' => $ipAddress, 'info' => $proxyCheckData[$ipAddress]]);
+   echo json_encode(['isUsingVPN' => true, 'geo' => $ipInfo, 'info' => $proxyCheckData[$ipAddress]]);
 } else {
-   echo json_encode(['isUsingVPN' =>false, 'geo' => $ipAddress, 'info' => $proxyCheckData[$ipAddress]]);
+   echo json_encode(['isUsingVPN' => false, 'geo' => $ipInfo, 'info' => $proxyCheckData[$ipAddress]]);
 }

@@ -14,8 +14,19 @@
          <div class="container mx-auto text-center">
             <h1 class="text-3xl font-bold mb-4">Kamu pake VPN?</h1>
             <div class="mt-8">
-               <p v-if="isUsingVPN" class="text-2xl font-bold">Pengguna menggunakan VPN.</p>
-               <p v-else class="text-2xl font-bold">Pengguna tidak menggunakan VPN.</p>
+               <div v-if="isUsingVPN" class="text-2xl font-bold bg-red-500 p-4 rounded-md mb-4">Cieee... Ketahuan pake VPN</div>
+               <div v-else class="text-2xl font-bold bg-green-500 p-4 rounded-md mb-4">Mantap Ente bersih...
+               </div>
+            </div>
+            <div v-if="info" class="mt-8">
+               <h2 class="text-xl font-bold mb-2">Informasi Lokasi dan Koneksi:</h2>
+               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div v-for="(value, key) in info" :key="key" class="bg-gray-800 p-4 rounded-md text-left">
+                     <strong class="text-gray-400">{{ key.charAt(0).toUpperCase() + key.slice(1) }}:</strong>
+                     <span v-if="typeof value === 'object'">{{ value.code }} ({{ value.name }})</span>
+                     <span v-else>{{ value }}</span>
+                  </div>
+               </div>
             </div>
          </div>
       </div>
@@ -25,10 +36,13 @@
             el: '#app',
             data: {
                isUsingVPN: false,
+               info: null,
             },
             async mounted() {
                try {
-                  this.isUsingVPN = await this.checkVPNUsage();
+                  const result = await this.checkVPNUsage();
+                  this.isUsingVPN = result.isUsingVPN;
+                  this.info = result.info;
                } catch (error) {
                   console.error('Error:', error);
                }
@@ -36,18 +50,12 @@
             methods: {
                async checkVPNUsage() {
                   try {
-                     const response = await fetch('http://bpvp/check-ip/proxy.php');
-                     const ipInfo = await response.json();
-                     const ipAddress = ipInfo.ip;
+                     const response = await fetch('https://bpvp/check-ip/proxy.php');
+                     const result = await response.json();
 
-                     const proxyCheckResponse = await fetch(`https://proxycheck.io/v2/${ipAddress}?vpn=1&asn=1`);
-                     const proxyCheckData = await proxyCheckResponse.json();
-
-                     console.log(proxyCheckData[ipAddress].proxy);
-
-                     return 'yes' in proxyCheckData[ipAddress].proxy;
+                     return result;
                   } catch (error) {
-                     console.error('Waduh gagal bang =>', error);
+                     console.error('Error checking VPN usage:', error);
                      throw error;
                   }
                }

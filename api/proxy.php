@@ -20,7 +20,7 @@ $proxyCheckResponse = file_get_contents("https://proxycheck.io/v2/$ipAddress?key
 $proxyCheckData = json_decode($proxyCheckResponse, true);
 
 if (isset($proxyCheckData[$ipAddress]['proxy']) && $proxyCheckData[$ipAddress]['proxy'] == 'yes') {
-   echo json_encode(['isUsingVPN' => true, 'geo' => $ipInfo, 'info' => $proxyCheckData[$ipAddress]]);
+   echo json_encode(['isUsingVPN' => true, 'info' => $proxyCheckData[$ipAddress]]);
 } else {
-   echo json_encode(['isUsingVPN' => false, 'geo' => $ipInfo, 'info' => $proxyCheckData[$ipAddress]]);
+   echo json_encode(['isUsingVPN' => false, 'info' => $proxyCheckData[$ipAddress]]);
 }
